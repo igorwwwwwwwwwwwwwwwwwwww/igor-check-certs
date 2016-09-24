@@ -1,5 +1,7 @@
 # igor-check-certs
 
+Check certificates for nearing expiry.
+
 ## Usage
 
     $ go run check-certs.go -days 100 igor.io gif.industries expired.badssl.com
