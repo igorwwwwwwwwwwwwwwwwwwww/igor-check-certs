@@ -20,6 +20,7 @@ import (
 const ExUsage = 64
 
 var hostsFile = flag.String("hosts", "", "path of file containing hostnames to check")
+var days = flag.Int("days", 30, "number of days to look into the future")
 var concurrency = flag.Int("concurrency", 8, "concurrent checks")
 
 type result struct {
@@ -71,11 +72,11 @@ func checkCertificate(host string) (result, error) {
 	}
 	conn.Close()
 
-	certExpiry := time.Now().Add(24 * 30 * time.Hour)
+	certExpiry := time.Now().AddDate(0, 0, *days)
 
-	for _, cert := range conn.ConnectionState().PeerCertificates {
+	for i, cert := range conn.ConnectionState().PeerCertificates {
 		if certExpiry.After(cert.NotAfter) {
-			return r, errors.Errorf("cert expires at %v", cert.NotAfter)
+			return r, errors.Errorf("cert[%d] %s expires at %v", i, cert.Subject.CommonName, cert.NotAfter)
 		}
 	}
 
