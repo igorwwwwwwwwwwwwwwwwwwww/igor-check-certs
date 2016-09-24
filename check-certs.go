@@ -66,7 +66,12 @@ func checkCertificate(host string) (result, error) {
 		Hostname: host,
 	}
 
-	conn, err := tls.Dial("tcp", host+":443", &tls.Config{})
+	connectHost := host
+	if !strings.Contains(host, ":") {
+		connectHost = host + ":443"
+	}
+
+	conn, err := tls.Dial("tcp", connectHost, &tls.Config{})
 	if err != nil {
 		return r, errors.Wrap(err, "tls dial")
 	}
